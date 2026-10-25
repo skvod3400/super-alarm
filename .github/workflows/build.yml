@@ -38,6 +38,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: Супербудильник (сборка ${{ github.run_number }})
-          body: Скачайте super-alarm.apk на телефон и установите.
+          name: Тестовая сборка ${{ github.run_number }}
+          body: Тестовая версия «Супербудильник (тест)». Скачайте super-alarm.apk на телефон и установите.
+          prerelease: true
           files: super-alarm.apk

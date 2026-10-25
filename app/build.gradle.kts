@@ -15,7 +15,7 @@ android {
         versionName = "1.1"
     }
 
-    // Fixed debug key, so every CI build can be installed over the previous one
+    // Fixed debug key, so every test build can be installed over the previous one
     // without losing saved alarms.
     signingConfigs {
         getByName("debug") {
@@ -24,11 +24,30 @@ android {
             keyAlias = "androiddebugkey"
             keyPassword = "android"
         }
+        // The release key is never stored in the repository: CI restores it from GitHub secrets.
+        create("release") {
+            System.getenv("RELEASE_KEYSTORE")?.let { path ->
+                storeFile = file(path)
+                storePassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("RELEASE_KEY_ALIAS")
+                keyPassword = System.getenv("RELEASE_KEYSTORE_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         debug {
+            // A separate app id, so test builds and the RuStore version can live side by side.
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appLabel"] = "Супербудильник (тест)"
             signingConfig = signingConfigs.getByName("debug")
+        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            manifestPlaceholders["appLabel"] = "@string/app_name"
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
