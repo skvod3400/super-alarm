@@ -161,7 +161,11 @@ class AlarmService : Service() {
             enableVibration(false)
             lockscreenVisibility = Notification.VISIBILITY_PUBLIC
         }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        getSystemService(NotificationManager::class.java).run {
+            // The first version used another channel id; its settings may have been lowered.
+            deleteNotificationChannel(OLD_CHANNEL_ID)
+            createNotificationChannel(channel)
+        }
 
         val openAlarm = PendingIntent.getActivity(
             this, 0, AlarmActivity.intent(this, alarmId),
@@ -183,7 +187,8 @@ class AlarmService : Service() {
 
     companion object {
         private const val TAG = "AlarmService"
-        private const val CHANNEL_ID = "alarm"
+        private const val CHANNEL_ID = "alarm_screen"
+        private const val OLD_CHANNEL_ID = "alarm"
         private const val NOTIFICATION_ID = 1
         private const val MIN_VOLUME = 0.05f
         private const val VOLUME_STEP = 0.05f
@@ -196,7 +201,14 @@ class AlarmService : Service() {
 
         fun start(context: Context, alarmId: Int) {
             val intent = Intent(context, AlarmService::class.java).putExtra(EXTRA_ALARM_ID, alarmId)
-            context.startForegroundService(intent)
+            // Set right away: the ringing screen checks it before the service has started.
+            isRinging = true
+            try {
+                context.startForegroundService(intent)
+            } catch (e: Exception) {
+                isRinging = false
+                throw e
+            }
         }
 
         fun stop(context: Context) {

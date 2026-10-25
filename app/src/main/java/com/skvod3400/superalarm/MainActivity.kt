@@ -11,6 +11,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -47,6 +49,25 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         refreshAlarms()
         refreshPermissions()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        R.id.test -> {
+            AlarmScheduler.test(this)
+            Toast.makeText(this, R.string.test_scheduled, Toast.LENGTH_LONG).show()
+            true
+        }
+        R.id.appSettings -> {
+            Toast.makeText(this, R.string.app_settings_hint, Toast.LENGTH_LONG).show()
+            openSettings(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
     }
 
     private fun refreshAlarms() {

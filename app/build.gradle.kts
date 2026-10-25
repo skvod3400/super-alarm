@@ -11,8 +11,8 @@ android {
         applicationId = "com.skvod3400.superalarm"
         minSdk = 31
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     // Fixed debug key, so every CI build can be installed over the previous one

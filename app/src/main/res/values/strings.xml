@@ -10,6 +10,11 @@
     <string name="perm_full_screen">Показ на весь экран</string>
     <string name="perm_overlay">Поверх других окон (строгий режим)</string>
     <string name="perm_battery">Без ограничений батареи</string>
+    <string name="menu_test">Тест</string>
+    <string name="menu_app_settings">Настройки приложения</string>
+    <string name="test_scheduled">Звонок через 10 секунд — заблокируйте телефон</string>
+    <string name="test_alarm">Тестовый будильник</string>
+    <string name="app_settings_hint">Если экран будильника не появляется, включите здесь «Показ на экране блокировки» и «Всплывающие окна», если такие пункты есть</string>
     <string name="delete_title">Удалить будильник?</string>
     <string name="delete">Удалить</string>
     <string name="cancel">Отмена</string>

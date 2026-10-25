@@ -23,6 +23,9 @@ class AlarmActivity : AppCompatActivity() {
     private lateinit var problem: MathProblem
     private var alarmId = -1
 
+    /** Set when the alarm clock opened this screen; the sound is started in [onResume]. */
+    private var pendingFire: Intent? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setShowWhenLocked(true)
@@ -66,6 +69,10 @@ class AlarmActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         isOnScreen = true
+        pendingFire?.let {
+            pendingFire = null
+            AlarmTrigger.fire(this, it)
+        }
         if (!AlarmService.isRinging) {
             finish()
             return
@@ -85,10 +92,12 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     private fun handleIntent(intent: Intent) {
+        if (intent.action == ACTION_FIRE) pendingFire = intent
         alarmId = intent.getIntExtra(EXTRA_ALARM_ID, -1)
         val alarm = AlarmRepository.get(this, alarmId)
-        binding.label.text = alarm?.label
-        binding.label.isVisible = !alarm?.label.isNullOrBlank()
+        val label = if (alarmId == TEST_ALARM_ID) getString(R.string.test_alarm) else alarm?.label
+        binding.label.text = label
+        binding.label.isVisible = !label.isNullOrBlank()
         binding.snooze.isVisible = alarm != null
     }
 
